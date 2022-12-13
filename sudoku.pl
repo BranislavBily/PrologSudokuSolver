@@ -8,6 +8,11 @@ same(X, Y) :- X = Y.
 notProvable(P) :- P, !, fail.
 notProvable(_).
 
+%Returns true if all elements in list are in range
+%all_in_range/3(+Lst, +Min, +Max)
+in_range(Lst, Min, Max) :-
+    maplist(between(Min, Max), Lst).
+
 %Returns true if two "elements" are not the same
 %Yes I could have used \= but I wanted to try not predicate
 %not_same/2(+X, +Y)
@@ -47,21 +52,73 @@ transpose(Matrix, Transpose) :-
 check_sudoku_numbers(Rows, Size) :-
     append(Rows, Numbers),
     %Check if all numbers are in range of 1 to Size
-    maplist(between(1, Size), Numbers),
+    in_range(Numbers, 1, Size),
     %Check if all numbers in a row are different
     maplist(all_numbers_different, Rows),
 
     transpose(Rows, Cols),
     maplist(all_numbers_different, Cols).
 
-%Checks is size is power of Natural number and 
-%if it is, checks if all numbers in squares are different
-%check_sudoku_squares/2(+Rows, +Size)
-check_sudoku_square(Rows, Size) :-
+%Create one NxN square from N rows and "appends" them into one list
+%create_square(+NRows, +N, +NumberOfElementsInSquare, -SquareElements, -RestOfRows)
+create_square(Rows, 0, _, [], Rows).
+create_square([H | Tail], Size, NumberOfElementsInSquare, Square, [Last | RestOfRows]) :-
+    get_rows_for_sudoku_squares(H, NumberOfElementsInSquare, FirstN, Last),
+    NewSize is Size - 1,
+    create_square(Tail, NewSize, NumberOfElementsInSquare, Square2, RestOfRows),
+    append(FirstN, Square2, Square), !.
+
+%Checks if all numbers in square are different
+%check_every_square_in_given_rows/3(+Rows, +Iter,+SquareSize,  +SudokuSize)
+check_every_square_in_given_rows([[], []], _,  _, _) :- !.
+check_every_square_in_given_rows(Rows, 1, SquareSize, _) :-
+    append(Rows, Numbers),
+    SquareRange is SquareSize * SquareSize,
+    in_range(Numbers, 1, SquareRange),
+    !.
+
+check_every_square_in_given_rows(Rows, Iter, SquareSize,  SudokuSize) :-
+    create_square(Rows, SudokuSize, SudokuSize, NumbersInSquare, RestOfRow),
+    SquareRange is SquareSize * SquareSize,
+    in_range(NumbersInSquare, 1, SquareRange),
+    NewIter is Iter -1,
+    %call on smaller
+    check_every_square_in_given_rows(RestOfRow, NewIter, SquareSize, SudokuSize).
+
+
+%get_rows_for_sudoku_squares(+Rows, +Size, -FirstNElements, -RestOfRow)
+get_rows_for_sudoku_squares(Rows, 0, [], Rows).
+get_rows_for_sudoku_squares([H|T], 1, [H], T) :- !.
+get_rows_for_sudoku_squares([H|T], Size, [H|FirstNElements], RestOfRow) :-
+    Size > 1,
+    NewSize is Size - 1,
+    get_rows_for_sudoku_squares(T, NewSize, FirstNElements, RestOfRow), !.
+
+%check_squares_in_size_rows(+Rows, +SquareSize, -UncheckedRows)
+check_squares_in_size_rows(Rows, SquareSize, UncheckedRows) :-
+    get_rows_for_sudoku_squares(Rows, SquareSize, NRows, UncheckedRows),
+    check_every_square_in_given_rows(NRows, SquareSize, SquareSize, SquareSize).
+
+%Separates rows into the square size
+%check_square(+Rows, +SquareSize)
+check_squares([], _) :- !.
+check_squares(Rows, SquareSize) :-
+    check_squares_in_size_rows(Rows, SquareSize, UncheckedRows),
+    check_squares(UncheckedRows, SquareSize).
+
+%Checks if size is power of Natural number
+%check_square_dims/2(+Size, -LittleSquareSize)
+check_square_dims(Size, LittleSquareSize) :-
     LittleSquareSize is round(sqrt(Size)),
     LittleSquareSize * LittleSquareSize =:= Size.
 
-    %check_squares(Rows, LittleSquareSize).
+%Checks is size is power of Natural number and 
+%if it is, checks if all numbers in squares are different
+%check_sudoku_squares/2(+Rows, +Size)
+check_sudoku_squares(Rows, Size) :-
+    check_square_dims(Size, SquareSize),
+
+    check_squares(Rows, SquareSize).
 
 %Checks contraints of sudoku, so if it is square, if all numbers are in range
 %and if all numbers are different in a row and in a column and in squares
