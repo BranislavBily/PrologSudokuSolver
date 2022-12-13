@@ -1,12 +1,4 @@
 :- use_module(library(lists)).
-%Returns true if two "elements" are same
-%same/2(+X, +Y)
-same(X, Y) :- X = Y.
-
-%If P is success, fail and never come back
-%notProvable/1(+P)
-notProvable(P) :- P, !, fail.
-notProvable(_).
 
 %Returns true if all elements in list are in range
 %all_in_range/3(+Lst, +Min, +Max)
@@ -14,9 +6,8 @@ in_range(Lst, Min, Max) :-
     maplist(between(Min, Max), Lst).
 
 %Returns true if two "elements" are not the same
-%Yes I could have used \= but I wanted to try not predicate
 %not_same/2(+X, +Y)
-not_same(X, Y) :- notProvable(same(X, Y)).
+not_same(X, Y) :- X \= Y.
 
 %Checks if all numbers in list are different by
 %checking every possible combination
@@ -46,18 +37,19 @@ transpose(Matrix, Transpose) :-
     nonvar(Matrix),
     findall(L, maplist(nth1(_), Matrix, L), Transpose).
 
+check_sudoku_row(Size, Row) :-
+    in_range(Row, 1, Size),
+    all_numbers_different(Row).
+
 %Check if all number are in range 1 to Size
 %And if all numbers are different
 %check_sudoku_numbers/2(+Rows, +Size)
 check_sudoku_numbers(Rows, Size) :-
-    append(Rows, Numbers),
-    %Check if all numbers are in range of 1 to Size
-    in_range(Numbers, 1, Size),
     %Check if all numbers in a row are different
-    maplist(all_numbers_different, Rows),
+    maplist(check_sudoku_row(Size), Rows),
 
     transpose(Rows, Cols),
-    maplist(all_numbers_different, Cols).
+    maplist(check_sudoku_row(Size), Cols).
 
 %Create one NxN square from N rows and "appends" them into one list
 %create_square(+NRows, +N, +NumberOfElementsInSquare, -SquareElements, -RestOfRows)
