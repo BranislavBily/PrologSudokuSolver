@@ -37,6 +37,9 @@ transpose(Matrix, Transpose) :-
     nonvar(Matrix),
     findall(L, maplist(nth1(_), Matrix, L), Transpose).
 
+%Checks row of numbers if they are in range 1 to Size
+%and if all numbers are different
+%check_sudoku_row/2(+Size, +Row)
 check_sudoku_row(Size, Row) :-
     in_range(Row, 1, Size),
     all_numbers_different(Row).
@@ -45,23 +48,24 @@ check_sudoku_row(Size, Row) :-
 %And if all numbers are different
 %check_sudoku_numbers/2(+Rows, +Size)
 check_sudoku_numbers(Rows, Size) :-
-    %Check if all numbers in a row are different
+    %Check if all numbers in every row are different
     maplist(check_sudoku_row(Size), Rows),
 
+    %Check if all numbers in every column are different
     transpose(Rows, Cols),
     maplist(check_sudoku_row(Size), Cols).
 
 %Create one NxN square from N rows and "appends" them into one list
-%create_square(+NRows, +N, +NumberOfElementsInSquare, -SquareElements, -RestOfRows)
+%create_square/5(+NRows, +N, +NumberOfElememsFromRow, -SquareElements, -RestOfRows)
 create_square(Rows, 0, _, [], Rows).
-create_square([H | Tail], Size, NumberOfElementsInSquare, Square, [Last | RestOfRows]) :-
-    get_rows_for_sudoku_squares(H, NumberOfElementsInSquare, FirstN, Last),
+create_square([H | Tail], Size, NumberOfElememsFromRow, Square, [Last | RestOfRows]) :-
+    get_rows_for_sudoku_squares(H, NumberOfElememsFromRow, FirstN, Last),
     NewSize is Size - 1,
-    create_square(Tail, NewSize, NumberOfElementsInSquare, Square2, RestOfRows),
+    create_square(Tail, NewSize, NumberOfElememsFromRow, Square2, RestOfRows),
     append(FirstN, Square2, Square), !.
 
 %Checks if all numbers in square are different
-%check_every_square_in_given_rows/3(+Rows, +Iter,+SquareSize,  +SudokuSize)
+%check_every_square_in_given_rows/4(+Rows, +Iter,+SquareSize,  +SudokuSize)
 check_every_square_in_given_rows([[], []], _,  _, _) :- !.
 check_every_square_in_given_rows(Rows, 1, SquareSize, _) :-
     append(Rows, Numbers),
@@ -69,16 +73,19 @@ check_every_square_in_given_rows(Rows, 1, SquareSize, _) :-
     in_range(Numbers, 1, SquareRange),
     !.
 
+%Checks if all numbers in squares in rows have different numbers
+%check_every_square_in_given_rows/4(+Rows, +Iter, +SquareSize, +SudokuSize)
 check_every_square_in_given_rows(Rows, Iter, SquareSize,  SudokuSize) :-
     create_square(Rows, SudokuSize, SudokuSize, NumbersInSquare, RestOfRow),
     SquareRange is SquareSize * SquareSize,
     in_range(NumbersInSquare, 1, SquareRange),
     NewIter is Iter -1,
-    %call on smaller
+    %Check next square
     check_every_square_in_given_rows(RestOfRow, NewIter, SquareSize, SudokuSize).
 
 
-%get_rows_for_sudoku_squares(+Rows, +Size, -FirstNElements, -RestOfRow)
+%This can get the first N elements from a list and the rest of the list
+%get_rows_for_sudoku_squares/4(+Rows, +Size, -FirstNElements, -RestOfRow)
 get_rows_for_sudoku_squares(Rows, 0, [], Rows).
 get_rows_for_sudoku_squares([H|T], 1, [H], T) :- !.
 get_rows_for_sudoku_squares([H|T], Size, [H|FirstNElements], RestOfRow) :-
@@ -86,13 +93,14 @@ get_rows_for_sudoku_squares([H|T], Size, [H|FirstNElements], RestOfRow) :-
     NewSize is Size - 1,
     get_rows_for_sudoku_squares(T, NewSize, FirstNElements, RestOfRow), !.
 
-%check_squares_in_size_rows(+Rows, +SquareSize, -UncheckedRows)
+%Checks if all squares in rows are correct
+%check_squares_in_size_rows/3(+Rows, +SquareSize, -UncheckedRows)
 check_squares_in_size_rows(Rows, SquareSize, UncheckedRows) :-
     get_rows_for_sudoku_squares(Rows, SquareSize, NRows, UncheckedRows),
     check_every_square_in_given_rows(NRows, SquareSize, SquareSize, SquareSize).
 
 %Separates rows into the square size
-%check_square(+Rows, +SquareSize)
+%check_square/2(+Rows, +SquareSize)
 check_squares([], _) :- !.
 check_squares(Rows, SquareSize) :-
     check_squares_in_size_rows(Rows, SquareSize, UncheckedRows),
