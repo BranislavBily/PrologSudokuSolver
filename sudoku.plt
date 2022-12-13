@@ -2,32 +2,32 @@
 :- include(sudoku).
 
 %Testing not same
-test(5) :- not_same(2,1).
-test(6, [fail]) :- not_same(1,1).
-test(7, [fail]) :- not_same(2,2).
-test(8) :- not_same(1,10).
+test(different_number1) :- not_same(2,1).
+test(same_number1, [fail]) :- not_same(1,1).
+test(same_number2, [fail]) :- not_same(2,2).
+test(different_numbers2) :- not_same(1,10).
 
 %Testing all_numbers_different
-test(9) :- all_numbers_different([1,2,3,4,5,6,7,8,9]).
-test(10, [fail]) :- all_numbers_different([1,2,3,4,5,6,7,8,9,9]).
-test(11, [fail]) :- all_numbers_different([1,2,3,4,5,6,7,8,9,1]).
+test(all_different_numbers) :- all_numbers_different([1,2,3,4,5,6,7,8,9]).
+test(number_9_twice, [fail]) :- all_numbers_different([1,2,3,4,5,6,7,8,9,9]).
+test(number_1_twice, [fail]) :- all_numbers_different([1,2,3,4,5,6,7,8,9,1]).
 
 %Testing first_row_size
-test(12) :- first_row_size([[1,2,3,4,5,6,7,8,9], [1,3,4,4,5,6,4,23,1,1000]], 9).
-test(13, [fail]) :- first_row_size([[1,2,3,4,5,6,7,8,9]], 10).
-test(14) :- first_row_size([], 0).
+test(length_of_first_row) :- first_row_size([[1,2,3,4,5,6,7,8,9], [1,3,4,4,5,6,4,23,1,1000]], 9).
+test(incorrect_length_of_row, [fail]) :- first_row_size([[1,2,3,4,5,6,7,8,9]], 10).
+test(empty_row_correct_len) :- first_row_size([], 0).
 
 %Testing check_sudoku_square
-test(15, [fail]) :- check_sudoku_square_and_get_size([[1,2,3,4,5,6,7,8,9], [1,3,4,4,5,6,4,23,1,1000]], _).
-test(16, [true(X = 3)]) :- check_sudoku_square_and_get_size([[1,2,3], [4,5,6], [7,8,9]], X).
-test(17, [fail]) :- check_sudoku_square_and_get_size([[1,2,3], [4,5,6]], _).
-test(18, [true(X = 4)]) :- check_sudoku_square_and_get_size([[1,2,3,4], [5,6,7,8], [9,10,11,12], [13,14,15,16]], X).
-test(19, [true(X = 4)]) :- check_sudoku_square_and_get_size([[1,2,3,4], [5,6,7,8], [9,10,11,12], [13,14,15,16]], X).
+test(not_a_square, [fail]) :- check_sudoku_square_and_get_size([[1,2,3,4,5,6,7,8,9], [1,3,4,4,5,6,4,23,1,1000]], _).
+test(square_3, [true(X = 3)]) :- check_sudoku_square_and_get_size([[1,2,3], [4,5,6], [7,8,9]], X).
+test(not_a_square, [fail]) :- check_sudoku_square_and_get_size([[1,2,3], [4,5,6]], _).
+test(square_4, [true(X = 4)]) :- check_sudoku_square_and_get_size([[1,2,3,4], [5,6,7,8], [9,10,11,12], [13,14,15,16]], X).
+test(square_5, [true(X = 5)]) :- check_sudoku_square_and_get_size([[1,2,3,4,5], [5,6,7,8,5], [9,10,11,12,5], [13,14,15,16,5], [1,2,3,4,5]], X).
 
 %Testing transpose
-test(20) :- transpose([[1,2,3], [4,5,6], [7,8,9]], [[1,4,7], [2,5,8], [3,6,9]]).
-test(21) :- transpose([[1,2,3,4], [5,6,7,8], [9,10,11,12], [13,14,15,16]], [[1,5,9,13], [2,6,10,14], [3,7,11,15], [4,8,12,16]]).
-test(22) :- transpose([[1,2,3,4,5,6,7,8,9], 
+test(transposing_3x3) :- transpose([[1,2,3], [4,5,6], [7,8,9]], [[1,4,7], [2,5,8], [3,6,9]]).
+test(transposing_4x4) :- transpose([[1,2,3,4], [5,6,7,8], [9,10,11,12], [13,14,15,16]], [[1,5,9,13], [2,6,10,14], [3,7,11,15], [4,8,12,16]]).
+test(transposing_9x9) :- transpose([[1,2,3,4,5,6,7,8,9], 
                     [9,8,7,6,5,4,3,2,1],
                     [1,2,3,4,5,6,7,8,9],
                     [9,8,7,6,5,4,3,2,1],
@@ -49,43 +49,40 @@ test(22) :- transpose([[1,2,3,4,5,6,7,8,9],
                     ]).
 
 %Testing check_sudoku_numbers
-test(23) :- check_sudoku_numbers([[1,3,2,4], [4,2,1,3], [3,1,4,2], [2,4,3,1]], 4).
-%Number 5 does not belong
-test(24, [fail]) :- check_sudoku_numbers([[1,3,2,4], [4,2,1,3], [3,1,4,2], [2,4,3,5]], 4).
-%Number 4 appears twice in second row
-test(25, [fail]) :- check_sudoku_numbers([[1,3,2,4], [4,2,4,3], [3,1,4,2], [2,4,3,5]], 4).
-%Number 1 appears twice in first column
-test(26, [fail]) :- check_sudoku_numbers([[1,3,2,4], [1,2,1,3], [3,1,4,2], [2,4,3,5]], 4).
+test(all_numbers_in_range) :- check_sudoku_numbers([[1,3,2,4], [4,2,1,3], [3,1,4,2], [2,4,3,1]], 4).
+test(number_5_not_in_range, [fail]) :- check_sudoku_numbers([[1,3,2,4], [4,2,1,3], [3,1,4,2], [2,4,3,5]], 4).
+test(number_4_twice_in_row, [fail]) :- check_sudoku_numbers([[1,3,2,4], [4,2,4,3], [3,1,4,2], [2,4,3,5]], 4).
+test(number_1_twice_in_column, [fail]) :- check_sudoku_numbers([[1,3,2,4], [1,2,1,3], [3,1,4,2], [2,4,3,5]], 4).
 
-test(27, [all(X == [1])]) :- check_sudoku_numbers([[X,3,2,4], [4,2,X,3], [3,X,4,2], [2,4,3,X]], 4).
-test(28, [all(Y == [2])]) :- check_sudoku_numbers([[1,3,Y,4], [4,Y,1,3], [3,1,4,Y], [Y,4,3,1]], 4).
+test(finding_member1, [all(X == [1])]) :- check_sudoku_numbers([[X,3,2,4], [4,2,X,3], [3,X,4,2], [2,4,3,X]], 4).
+test(finding_member2, [all(Y == [2])]) :- check_sudoku_numbers([[1,3,Y,4], [4,Y,1,3], [3,1,4,Y], [Y,4,3,1]], 4).
 
-test(29, [true(X = 1)]) :- check_square_dims(1,X).
-test(30, [true(X = 2)]) :- check_square_dims(4, X).
-test(31, [true(X = 3)]) :- check_square_dims(9, X).
-test(32, [true(X = 4)]) :- check_square_dims(16, X).
-test(33, [fail]) :- check_square_dims(10, 3.16).
+test(correct_square_dims1, [true(X = 1)]) :- check_square_dims(1,X).
+test(correct_square_dims2, [true(X = 2)]) :- check_square_dims(4, X).
+test(correct_square_dims3, [true(X = 3)]) :- check_square_dims(9, X).
+test(correct_square_dims4, [true(X = 4)]) :- check_square_dims(16, X).
+test(not_square_power_of_natural, [fail]) :- check_square_dims(10, 3.16).
 
-test(34, [true(Y = [4,5])]) :- get_rows_for_sudoku_squares([1,2,3,4,5], 3, [1,2,3], Y).
-test(35, [true(Y = [2,3,4,5,6,10])]) :- get_rows_for_sudoku_squares([1,2,3,4,5,6,10], 1, [1], Y).
+test(separating_first_n_and_rest1, [true(Y = [4,5])]) :- get_rows_for_sudoku_squares([1,2,3,4,5], 3, [1,2,3], Y).
+test(separating_first_n_and_rest2, [true(Y = [2,3,4,5,6,10])]) :- get_rows_for_sudoku_squares([1,2,3,4,5,6,10], 1, [1], Y).
 
-test(36, [true(FirstTwoRows = [[1,3,2,4], [4,2,1,3]])]) :- get_rows_for_sudoku_squares([[1,3,2,4], [4,2,1,3], [3,1,4,2], [2,4,3,5]], 2, FirstTwoRows, [[3,1,4,2],[2,4,3,5]]).
+test(separating_first_n_of_2_rows_and_rest, [true(FirstTwoRows = [[1,3,2,4], [4,2,1,3]])]) :- get_rows_for_sudoku_squares([[1,3,2,4], [4,2,1,3], [3,1,4,2], [2,4,3,5]], 2, FirstTwoRows, [[3,1,4,2],[2,4,3,5]]).
 
-test(37, [true(X = [1,3,4,2])]) :- create_square([[1,3,2,4], [4,2,1,3]], 2, 2, X, [[2,4], [1,3]]).
-test(38, [true(X = [2,4,1,3])]) :- create_square([[2,4], [1,3]], 2, 2, X, [[], []]).
+test(get_first_square_as_list_and_rest, [true(X = [1,3,4,2])]) :- create_square([[1,3,2,4], [4,2,1,3]], 2, 2, X, [[2,4], [1,3]]).
+test(get_first_square_as_list_and_rest, [true(X = [2,4,1,3])]) :- create_square([[2,4], [1,3]], 2, 2, X, [[], []]).
 
-test(39) :- check_every_square_in_given_rows([[2,4], [1,3]], 2, 2, 2).
-test(40) :- check_every_square_in_given_rows([[1,3,2,4], [4,2,1,3]], 2, 2, 2).
-test(41) :- check_every_square_in_given_rows([
+test(all_in_range_in_square1) :- check_every_square_in_given_rows([[2,4], [1,3]], 2, 2, 2).
+test(all_in_range_in_square2) :- check_every_square_in_given_rows([[1,3,2,4], [4,2,1,3]], 2, 2, 2).
+test(all_in_range_in_square3) :- check_every_square_in_given_rows([
                                             [7,3,4, 1,6,2, 9,8,5],
                                             [6,8,5, 4,7,9, 3,2,1],
                                             [2,1,9, 5,3,8, 6,4,7]
                                             ], 3, 3, 3).
 
-test(42) :- check_squares([[1,3,2,4], [1,2,1,3], [3,1,4,2], [2,4,3,1]], 2).
-test(43, [fail]) :- check_squares([[1,3,2,4], [1,2,1,3], [3,1,4,2], [2,4,3,5]], 2).
+test(all_in_range_in_square4) :- check_squares([[1,3,2,4], [1,2,1,3], [3,1,4,2], [2,4,3,1]], 2).
+test(number_5_out_of_range, [fail]) :- check_squares([[1,3,2,4], [1,2,1,3], [3,1,4,2], [2,4,3,5]], 2).
 
-test(44) :- check_squares([
+test(all_in_range_in_square5) :- check_squares([
     [7,3,4, 1,6,2, 9,8,5],
     [6,8,5, 4,7,9, 3,2,1],
     [2,1,9, 5,3,8, 6,4,7],
@@ -99,7 +96,7 @@ test(44) :- check_squares([
     [4,7,3, 8,9,1, 5,6,2]
     ], 3).
 
-test(45, [fail]) :-
+test(number_0_out_of_range, [fail]) :-
     check_squares([
         [7,3,4, 1,6,2, 9,8,5],
         [6,0,5, 4,7,9, 3,2,1],
@@ -114,7 +111,7 @@ test(45, [fail]) :-
         [4,7,3, 8,9,1, 5,6,2]
         ], 3).
 
-test(46, [all(X = [8])]) :- sudoku([
+test(finding_solution, [all(X = [8])]) :- sudoku([
             [7,3,4, 1,6,2, 9,X,5],
             [6,X,5, 4,7,9, 3,2,1],
             [2,1,9, 5,3,X, 6,4,7],
@@ -128,7 +125,7 @@ test(46, [all(X = [8])]) :- sudoku([
             [4,7,3, X,9,1, 5,6,2]
             ]).
 
-test(47, [all(X = [8, 1])]) :- sudoku([
+test(finding_two_solutions1, [all(X = [8, 1])]) :- sudoku([
             [7,3,4, Y,6,2, 9,X,5],
             [6,X,5, 4,7,9, 3,2,Y],
             [2,Y,9, 5,3,X, 6,4,7],
@@ -141,7 +138,7 @@ test(47, [all(X = [8, 1])]) :- sudoku([
             [9,2,6, 3,4,5, 7,Y,X],
             [4,7,3, X,9,Y, 5,6,2]
             ]).
-test(47, [all(Y = [1, 8])]) :- sudoku([
+test(finding_two_solutions2, [all(Y = [1, 8])]) :- sudoku([
             [7,3,4, Y,6,2, 9,X,5],
             [6,X,5, 4,7,9, 3,2,Y],
             [2,Y,9, 5,3,X, 6,4,7],
@@ -155,7 +152,7 @@ test(47, [all(Y = [1, 8])]) :- sudoku([
             [4,7,3, X,9,Y, 5,6,2]
             ]).
 
-test(48, [fail]) :-
+test(no_solution_can_be_found_two_X_in_column, [fail]) :-
     sudoku([
         [7,3,4, Y,6,2, 9,X,5],
         [6,X,5, 4,7,9, 3,X,Y],
@@ -170,7 +167,7 @@ test(48, [fail]) :-
         [4,7,3, X,9,Y, 5,6,2]
         ]).
 
-test(49, [nondet]) :-
+test(solution_exists, [nondet]) :-
         sudoku([
             [_, 6, 3, 5, 8, 1, 4, 2, _],
             [4, 1, 5, _, 6, _, 3, 7, 8],
@@ -183,10 +180,37 @@ test(49, [nondet]) :-
             [5, 4, 9, _, 2, _, 6, 1, 3]
             ]).
 
+test(solution_exists2, [nondet]) :-
+        sudoku([
+            [_, 1, 8, _, 9, 6, 7, _, _],
+            [4, 9, 6, 1, 5, 7, _, _, 2],
+            [_, 5, 3, _, _, 4, 1, 9, _],
+            [1, 8, 5, 7, 6, _, 4, 2, _],
+            [3, 7, 4, _, 2, 8, _, 6, _],
+            [9, 6, 2, 4, 1, 5, 3, _, _],
+            [5, 3, 1, 6, 7, 2, _, _, 4],
+            [6, 4, 9, 8, 3, 1, _, 5, 7],
+            [8, 2, 7, 5, 4, 9, _, 1, 3]
+            ]).
+
+% I don't know how to "capture" the variables in the solution
+% test(find_solution, [nondet]) :-
+%         sudoku([
+%             [Q, 1, 8, W, 9, 6, 7, E, R],
+%             [4, 9, 6, 1, 5, 7, T, Y, 2],
+%             [U, 5, 3, I, O, 4, 1, 9, P],
+%             [1, 8, 5, 7, 6, A, 4, 2, S],
+%             [3, 7, 4, D, 2, 8, F, 6, G],
+%             [9, 6, 2, 4, 1, 5, 3, H, J],
+%             [5, 3, 1, 6, 7, 2, K, L, 4],
+%             [6, 4, 9, 8, 3, 1, Z, 5, 7],
+%             [8, 2, 7, 5, 4, 9, X, 1, 3]
+%             ]).
+
 
 %Solved 16x16 sudoku from Google Images, I would post link but its 5Kbs
 %It was from this page http://www.pro.or.jp/~fuji/numplace/index.html
-test(50, [nondet]) :-
+test(correct_16x16_sudoku_puzzle, [nondet]) :-
     sudoku([
         [4,10,9,15,1,7,13,8,6,14,2,12,16,5,3,11],
         [2,5,3,1,15,4,11,16,13,9,8,7,6,10,12,14],
@@ -206,7 +230,7 @@ test(50, [nondet]) :-
         [3,1,10,14,5,6,2,11,9,7,15,16,13,4,8,12]
         ]).
 
-test(51, [nondet]) :-
+test(same_as_previous_has_solution_of_course, [nondet]) :-
     sudoku([
         [4,10,9,15,1,7,13,8,6,14,2,12,16,_,3,11],
         [2,5,3,1,_,4,11,16,13,9,8,7,6,10,12,14],
@@ -224,5 +248,25 @@ test(51, [nondet]) :-
         [6,13,12,5,9,16,15,1,14,8,4,2,10,7,11,3],
         [16,_,4,7,8,13,10,14,_,6,3,5,15,9,2,1],
         [3,1,10,_,5,6,2,11,9,7,15,16,13,4,8,12]
+        ]).
+
+test(incorrect_16x16_sudoku_puzzle_two_4_next_to_each_other, [fail]) :-
+    sudoku([
+        [4,10,9,15,1,7,13,8,6,14,2,12,16,5,3,11],
+        [2,5,3,1,15,4,11,16,13,9,8,7,6,10,12,14],
+        [14,6,13,12,3,10,5,2,16,11,1,4,8,15,9,7],
+        [11,7,16,8,6,14,9,12,5,3,10,15,1,2,13,4],
+        [8,16,11,4,13,15,14,9,2,5,7,3,12,1,10,6],
+        [1,14,6,13,12,8,4,4,10,16,9,11,2,3,7,15],
+        [10,15,5,3,2,1,6,7,4,12,14,8,9,11,16,13],
+        [12,2,7,9,11,3,16,10,15,13,6,1,4,8,14,5],
+        [9,4,1,10,14,2,3,13,11,15,12,6,7,16,5,8],
+        [5,8,14,16,7,9,1,6,3,4,13,10,11,12,15,2],
+        [7,3,15,6,16,11,12,4,8,2,5,9,14,13,1,10],
+        [13,12,2,11,10,5,8,15,7,1,16,14,3,6,4,9],
+        [15,9,8,2,4,12,7,3,1,10,11,13,5,14,6,16],
+        [6,13,12,5,9,16,15,1,14,8,4,2,10,7,11,3],
+        [16,11,4,7,8,13,10,14,12,6,3,5,15,9,2,1],
+        [3,1,10,14,5,6,2,11,9,7,15,16,13,4,8,12]
         ]).
 :- end_tests(sudoku).
