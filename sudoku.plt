@@ -24,10 +24,11 @@ test(13, [fail]) :- first_row_size([[1,2,3,4,5,6,7,8,9]], 10).
 test(14) :- first_row_size([], 0).
 
 %Testing check_sudoku_square
-test(15, [fail]) :- check_sudoku_square_and_get_height([[1,2,3,4,5,6,7,8,9], [1,3,4,4,5,6,4,23,1,1000]], _).
-test(16, [true(X = 3)]) :- check_sudoku_square_and_get_height([[1,2,3], [4,5,6], [7,8,9]], X).
-test(17, [fail]) :- check_sudoku_square_and_get_height([[1,2,3], [4,5,6]], _).
-test(18, [true(X = 4)]) :- check_sudoku_square_and_get_height([[1,2,3,4], [5,6,7,8], [9,10,11,12], [13,14,15,16]], X).
+test(15, [fail]) :- check_sudoku_square_and_get_size([[1,2,3,4,5,6,7,8,9], [1,3,4,4,5,6,4,23,1,1000]], _).
+test(16, [true(X = 3)]) :- check_sudoku_square_and_get_size([[1,2,3], [4,5,6], [7,8,9]], X).
+test(17, [fail]) :- check_sudoku_square_and_get_size([[1,2,3], [4,5,6]], _).
+test(18, [true(X = 4)]) :- check_sudoku_square_and_get_size([[1,2,3,4], [5,6,7,8], [9,10,11,12], [13,14,15,16]], X).
+test(18, [true(X = 4)]) :- check_sudoku_square_and_get_size([[1,2,3,4], [5,6,7,8], [9,10,11,12], [13,14,15,16]], X).
 
 %Testing transpose
 test(19) :- transpose([[1,2,3], [4,5,6], [7,8,9]], [[1,4,7], [2,5,8], [3,6,9]]).
@@ -61,5 +62,14 @@ test(23, [fail]) :- check_sudoku_numbers([[1,3,2,4], [4,2,1,3], [3,1,4,2], [2,4,
 test(24, [fail]) :- check_sudoku_numbers([[1,3,2,4], [4,2,4,3], [3,1,4,2], [2,4,3,5]], 4).
 %Number 1 appears twice in first column
 test(25, [fail]) :- check_sudoku_numbers([[1,3,2,4], [1,2,1,3], [3,1,4,2], [2,4,3,5]], 4).
+
+test(26, [all(X == [1])]) :- check_sudoku_numbers([[X,3,2,4], [4,2,X,3], [3,X,4,2], [2,4,3,X]], 4).
+test(27, [all(Y == [2])]) :- check_sudoku_numbers([[1,3,Y,4], [4,Y,1,3], [3,1,4,Y], [Y,4,3,1]], 4).
+
+test(28) :- check_sudoku_square(_, 1).
+test(29) :- check_sudoku_square(_, 9).
+test(30) :- check_sudoku_square(_, 16).
+test(31) :- check_sudoku_square(_, 25).
+test(32, [fail]) :- check_sudoku_square(_, 10).
 
 :- end_tests(sudoku).
